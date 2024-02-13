@@ -6,7 +6,6 @@ from utils.cacheEntry import *
 
 class EvictionPolicyType(Enum):
     LRU = auto()
-    LFU = auto()
     FIFO = auto()
     LIFO = auto()
     TTL = auto()
@@ -23,9 +22,6 @@ class Cache:
 
         if self.eviction_policy_type == EvictionPolicyType.LRU:
             return lru.LRU_Policy(self.cache_buffer)
-        
-        elif self.eviction_policy_type == EvictionPolicyType.LFU:
-            return lfu.LFU_Policy(self.cache_buffer)
         
         elif self.eviction_policy_type == EvictionPolicyType.FIFO:
             return fifo.FIFO_Policy(self.cache_buffer)

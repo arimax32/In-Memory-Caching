@@ -1,3 +1,4 @@
+import time
 import unittest
 import math
 import sys
@@ -91,6 +92,35 @@ class TestFIFOCache(TestEvictionPolicies):
 
         keys = super().get_test_keys()
         super().assertion_test(self.cache, "key1", keys)
+
+class TestTTLCache(unittest.TestCase):
+    def __init__(self, *args, **kwargs) -> None:
+        super(TestTTLCache, self).__init__(*args, **kwargs)
+        self.cache = None
+        self.eviction_policy_type = EvictionPolicyType.TTL
+
+    def setUpCache(self, duration=None):
+        if duration:
+            return Cache(self.eviction_policy_type, capacity=duration)
+        
+        return Cache(self.eviction_policy_type)
+
+    def test_ttl_eviction_policy(self):
+        # Set a cache with a TTL of 5 seconds which is by default anyways
+        self.cache = self.setUpCache(duration=5) 
+
+        self.cache.put("key1", "1",10)
+        self.cache.put("key2", "2")
+        self.cache.put("key3", "3")
+
+        # TTL of 'key2 and 'key3 is both 5 seconds hence this sleep makes them evict
+        time.sleep(6)
+
+        value = self.cache.get("key1")
+
+        self.assertIsNone(self.cache.get(2))
+        self.assertIsNone(self.cache.get(3))
+        self.assertEqual(value, "1")
 
 if __name__ == '__main__':
     unittest.main()
