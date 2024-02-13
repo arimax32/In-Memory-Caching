@@ -28,3 +28,7 @@ class TimeBoundQueue:
             else:
                 time_unit = next_task.execution_time - current_time
                 time.sleep(time_unit)
+
+    def empty(self):
+        # Clear the existing heap
+        self.queue = []

@@ -28,6 +28,10 @@ class TTL_Policy:
     def delete(self, key):
         pass
         
+    def clear(self):
+        with self.lock:
+            self.delayed_queue.empty()
+            
     def evict_entry(self, key):
         with self.lock:
             if key in self.cache_data:

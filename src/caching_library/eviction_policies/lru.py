@@ -10,9 +10,6 @@ class LRU_Policy:
         if key in self.order:
             self.order.move_to_end(key)
 
-    def print(self) :
-        print(self.order)
-
     def put(self, key, value): 
         removeKey = None
         if key in self.order: 
@@ -28,3 +25,7 @@ class LRU_Policy:
     def delete(self, key):
         if key in self.order:
             del self.order[key]
+    
+    def clear(self):
+        # Clear the existing dict
+        self.order.clear()

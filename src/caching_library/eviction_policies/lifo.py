@@ -9,17 +9,18 @@ class LIFO_Policy:
     def get(self, key): 
         pass 
 
-    def print(self) :
-        print(self.order)
-
     def put(self, key, value): 
         removeKey = None
         if len(self.order) >= self.capacity: 
             # Evict the last item from the cache (LIFO) 
             removeKey = self.order.pop().get_key()
-            print(removeKey)
+    
         self.order.append(CacheEntry(key, value)) 
         return removeKey
     
     def delete(self, key):
         pass
+
+    def clear(self):
+        # Clear the existing queue
+        self.order.clear()

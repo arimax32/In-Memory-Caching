@@ -64,6 +64,11 @@ class Cache:
             if key in self.cache_data:
                 del self.cache_data[key]
 
+    def clear(self):
+        with self.lock:
+            self.eviction_policy.clear()
+            self.cache_data.clear()
+
 if __name__ == '__main__':
     cache = Cache(EvictionPolicyType.TTL)
     start = time.time()

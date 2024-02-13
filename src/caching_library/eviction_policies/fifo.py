@@ -8,9 +8,6 @@ class FIFO_Policy:
     
     def get(self, key): 
         pass 
-    
-    def print(self) :
-        print(self.order)
 
     def put(self, key, value): 
         removeKey = None
@@ -23,3 +20,7 @@ class FIFO_Policy:
     
     def delete(self, key):
         pass
+
+    def clear(self):
+         # Clear the existing queue
+        self.order.clear()
