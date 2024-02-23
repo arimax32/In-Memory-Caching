@@ -2,30 +2,26 @@ from collections import OrderedDict
 from utils.cacheEntry import *
 
 class LRU_Policy: 
-    def __init__(self, capacity): 
+    def __init__(self): 
         self.order = OrderedDict() 
-        self.capacity = capacity 
 
-    def get(self, key): 
+    def process_get_entry(self, key): 
         if key in self.order:
             self.order.move_to_end(key)
 
-    def put(self, key, value): 
-        removeKey = None
+    def evict_entry(self):
+        return self.order.popitem(last=False)[0] 
+
+    def process_put_entry(self, key, value): 
         if key in self.order: 
             self.order.move_to_end(key) 
-        else :
-            if len(self.order) >= self.capacity: 
-                # Evict the least recently used item from the cache (LRU) 
-                removeKey = self.order.popitem(last=False)[0] 
 
         self.order[key] = CacheEntry(key,value)
-        return removeKey
     
-    def delete(self, key):
+    def process_delete_entry(self, key):
         if key in self.order:
             del self.order[key]
     
-    def clear(self):
+    def process_clear(self):
         # Clear the existing dict
         self.order.clear()

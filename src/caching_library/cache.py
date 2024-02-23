@@ -21,13 +21,13 @@ class Cache:
     def getPolicy(self) :
 
         if self.eviction_policy_type == EvictionPolicyType.LRU:
-            return lru.LRU_Policy(self.cache_buffer)
+            return lru.LRU_Policy()
         
         elif self.eviction_policy_type == EvictionPolicyType.FIFO:
-            return fifo.FIFO_Policy(self.cache_buffer)
+            return fifo.FIFO_Policy()
         
         elif self.eviction_policy_type == EvictionPolicyType.LIFO:
-            return lifo.LIFO_Policy(self.cache_buffer)
+            return lifo.LIFO_Policy()
         
         elif self.eviction_policy_type == EvictionPolicyType.TTL:
             self.lock = threading.RLock()
@@ -47,12 +47,17 @@ class Cache:
         with self.lock:
             if self.eviction_policy_type == EvictionPolicyType.TTL:
                 self.eviction_policy.put(key, value, duration)
-            else:
-                removeKey = self.eviction_policy.put(key, value)
-                if removeKey is not None : 
-                    del self.cache_data[removeKey]
-    
+            else :
+                if self.overflow():
+                    removeKey = self.eviction_policy.evict_entry()
+                    if removeKey is not None : 
+                        del self.cache_data[removeKey]
+
+                self.eviction_policy.process_put_entry(key, value)
                 self.cache_data[key] = CacheEntry(key,value)
+                
+    def overflow(self):
+        return len(self.cache_data) >= self.cache_buffer
 
     def delete(self, key):
         with self.lock:

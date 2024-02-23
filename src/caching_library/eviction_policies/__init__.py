@@ -1,2 +1,2 @@
 # eviction policies library
-__all__ = ["fifo", "lru", "lifo", "ttl"]
+__all__ = ["fifo", "lru", "lifo", "ttl", "lfu"]
