@@ -22,6 +22,6 @@ class LRU_Policy:
         if key in self.order:
             del self.order[key]
     
-    def process_clear(self):
+    def process_clear_entries(self):
         # Clear the existing dict
         self.order.clear()

@@ -14,10 +14,10 @@ class TTL_Policy:
         self.eviction_thread = threading.Thread(target=self.eviction_thread_task, daemon=True)
         self.eviction_thread.start()
 
-    def get(self, key):
+    def process_get_entry(self, key):
         pass
 
-    def put(self, key, value, duration=None):
+    def process_put_entry(self, key, value, duration=None):
         with self.lock:
             if duration is None:
                 duration = self.time
@@ -25,10 +25,10 @@ class TTL_Policy:
             self.cache_data[key] = CacheEntry(key,value)
             self.delayed_queue.push(duration, lambda: self.evict_entry(key))
 
-    def delete(self, key):
+    def process_delete_entry(self, key):
         pass
         
-    def clear(self):
+    def process_clear_entries(self):
         with self.lock:
             self.delayed_queue.empty()
             

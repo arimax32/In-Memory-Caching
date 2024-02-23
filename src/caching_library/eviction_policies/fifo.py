@@ -2,9 +2,8 @@ from collections import deque
 from utils.cacheEntry import *
 
 class FIFO_Policy: 
-    def __init__(self, capacity): 
+    def __init__(self): 
         self.order = deque()
-        self.capacity = capacity 
     
     def process_get_entry(self, key): 
         pass 
@@ -18,6 +17,6 @@ class FIFO_Policy:
     def process_delete_entry(self, key):
         pass
 
-    def process_clear(self):
+    def process_clear_entries(self):
          # Clear the existing queue
         self.order.clear()

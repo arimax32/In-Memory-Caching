@@ -38,7 +38,7 @@ class Cache:
 
     def get(self, key) :
         with self.lock:
-            self.eviction_policy.get(key)
+            self.eviction_policy.process_get_entry(key)
             if key in self.cache_data:
                 return self.cache_data[key].get_value()
             return None
@@ -46,7 +46,7 @@ class Cache:
     def put(self, key, value, duration=None) :
         with self.lock:
             if self.eviction_policy_type == EvictionPolicyType.TTL:
-                self.eviction_policy.put(key, value, duration)
+                self.eviction_policy.process_put_entry(key, value, duration)
             else :
                 if self.overflow():
                     removeKey = self.eviction_policy.evict_entry()
@@ -61,16 +61,36 @@ class Cache:
 
     def delete(self, key):
         with self.lock:
-            self.eviction_policy.delete(key)
+            self.eviction_policy.process_delete_entry(key)
             if key in self.cache_data:
                 del self.cache_data[key]
 
     def clear(self):
         with self.lock:
-            self.eviction_policy.clear()
+            self.eviction_policy.process_clear_entries()
             self.cache_data.clear()
 
+
 if __name__ == '__main__':
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     cache = Cache(EvictionPolicyType.TTL)
     start = time.time()
     cache.put('key1', 'value1', 40)
