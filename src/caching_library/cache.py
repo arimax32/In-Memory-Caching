@@ -16,10 +16,12 @@ class Cache:
         self.cache_buffer = capacity
         self.eviction_policy_type = eviction_policy_type
         self.lock = threading.Lock()
+        self.read_condition = threading.Condition(self.lock)
+        self.cache_write_status = False
+        self.cache_read_counter = 0
         self.eviction_policy = self.getPolicy()
 
     def getPolicy(self) :
-
         if self.eviction_policy_type == EvictionPolicyType.LRU:
             return lru.LRU_Policy()
         
@@ -37,14 +39,29 @@ class Cache:
             raise ValueError("Invalid eviction policy type")
 
     def get(self, key) :
-        with self.lock:
+        with self.read_condition:
+            self.cache_read_counter += 1
             self.eviction_policy.process_get_entry(key)
-            if key in self.cache_data:
-                return self.cache_data[key].get_value()
-            return None
+        
+        try : 
+            value = self.cache_data[key].get_value()
+        except KeyError:
+             value = None
+        
+        with self.read_condition:
+            self.cache_read_counter -= 1
+            if not self.cache_read_counter:
+                 self.read_condition.notify_all()
+            return value
+
 
     def put(self, key, value, duration=None) :
-        with self.lock:
+        with self.read_condition:
+            while self.cache_read_counter > 0:
+                 self.read_condition.wait()
+
+            self.cache_write_status = True
+
             if self.eviction_policy_type == EvictionPolicyType.TTL:
                 self.eviction_policy.process_put_entry(key, value, duration)
             else :
@@ -55,6 +72,8 @@ class Cache:
 
                 self.eviction_policy.process_put_entry(key, value)
                 self.cache_data[key] = CacheEntry(key,value)
+
+            self.cache_write_status = False
                 
     def overflow(self):
         return len(self.cache_data) >= self.cache_buffer

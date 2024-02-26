@@ -9,26 +9,14 @@ class LFU_Policy:
     def process_get_entry(self, key): 
         pass
 
-    def put(self, key, value):
+    def process_put_entry(self, key, value):
         pass 
-        # removeKey = None
-        # if key in self.order: 
-        #     self.order.move_to_end(key) 
-        # else :
-        #     if len(self.data_structure) >= self.capacity: 
-        #         # Evict the least recently used item from the cache (LRU) 
-        #         removeKey = self.order.popitem(last=False)[0] 
-
-        # self.order[key] = CacheEntry(key,value)
-        # return removeKey
     
-    def overflow(self, key, capacity) :
+    def evict_entry(self) :
         pass
     
     def process_delete_entry(self, key):
-        if key in self.order:
-            del self.order[key]
+        pass
     
-    def process_clear(self):
-        # Clear the existing dict
-        self.order.clear()
+    def process_clear_entries(self):
+        pass
